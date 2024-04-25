@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+}
+
+group 'OpenLibraryTemplate'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+dependencies {
+    testImplementation 'io.cucumber:cucumber-java:7.15.0'
+    implementation 'io.cucumber:cucumber-junit:7.15.0'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.17.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.5.3'
+    implementation 'io.rest-assured:rest-assured:5.2.0'
+    implementation 'com.google.guava:guava:33.0.0-jre'
+}
+
+task cucumber() {
+    dependsOn assemble, compileTestJava
+    doLast {
+        javaexec {
+            mainClass = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', '--glue', 'openLibrary', 'src/test/resources/features']
+        }
+    }
+}
